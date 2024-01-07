@@ -16,11 +16,11 @@ This is my own implementation of an API rate-limiter middleware in Go using diff
 ## Setup
 
 ```
-Make build
+make build
 ```
 
 ```
-Make install
+make install
 ```
 
 ## Run
@@ -32,7 +32,7 @@ go-rate-limiter <algorithm> --flag1 --flag2
 ## Tests
 
 ```
-go test -v ./... --cover
+make test
 ```
 
 ## Stress Tests
@@ -56,6 +56,16 @@ go-rate-limiter tokenBucket --capacity 20 --refillRate 1
 ```
 loadtest -c <number of concurrent users> --cores <number of cpu cores> --rps <target request per second by client> -k -n <number of requests to perform> http://localhost:8080/limited
 ```
+
+### Docker
+
+You can run Redis together with multiple instances of the app to test the Sliding Window Counter algorithm across multiple servers:
+
+```
+make run-docker
+```
+
+- API Servers will be running on port 8085 and 8086.
 
 ## Packages
 
