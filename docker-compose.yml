@@ -1,0 +1,56 @@
+version: '3.8'
+services:
+  app1:
+    container_name: rl-app1
+    build: .
+    ports:
+      - 8085:8080
+    depends_on:
+      - redis
+    command:
+      [
+        'redisSlidingWindowCounter',
+        '--redisURL',
+        'redis://redis:6379'
+      ]
+
+  app2:
+    container_name: rl-app2
+    build: .
+    ports:
+      - 8086:8080
+    depends_on:
+      - redis
+    command:
+      [
+        'redisSlidingWindowCounter',
+        '--redisURL',
+        'redis://redis:6379'
+      ]
+
+  redis:
+    container_name: rl-redis
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    command: [ 'redis-server', '--appendonly', 'yes' ]
+    volumes:
+      - redis-volume:/data/redis
+
+  redis-commander:
+    container_name: rl-redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=root
+      - HTTP_PASSWORD=qwerty
+    ports:
+      - 8087:8081
+    depends_on:
+      - redis
+
+volumes:
+  redis-volume:
+    driver: local
